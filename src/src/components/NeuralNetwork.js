@@ -1,15 +1,15 @@
 // src/components/NeuralNetwork.js
-import React, { useEffect, useState } from 'react';
-import Neuron from './Neuron';
-import Connection from './Connection';
+import React, { useEffect, useState } from 'react'
+import Neuron from './Neuron'
+import Connection from './Connection'
 
 // generate random voltage values
 const getRandomVoltage = (minVoltage, maxVoltage) => {
-  return Math.random() * (maxVoltage - minVoltage) + minVoltage;
-};
+  return Math.random() * (maxVoltage - minVoltage) + minVoltage
+}
 
-const NeuralNetwork = ({ neurons, connections }) => {
-  const [neuronStates, setNeuronStates] = useState(neurons);
+const NeuralNetwork = ({ neurons, connections, height, width }) => {
+  const [neuronStates, setNeuronStates] = useState(neurons)
 
   // Randoml neuron voltages
   useEffect(() => {
@@ -18,15 +18,15 @@ const NeuralNetwork = ({ neurons, connections }) => {
         prevStates.map((neuron) => ({
           ...neuron,
           voltage: getRandomVoltage(-70, 30),
-        }))
-      );
-    }, 1000);
+        })),
+      )
+    }, 1000)
 
-    return () => clearInterval(intervalId); // Clean up the interval on unmount
-  }, []);
+    return () => clearInterval(intervalId) // Clean up the interval on unmount
+  }, [])
 
   return (
-    <svg width="600" height="600">
+    <svg width={width} height={height}>
       {connections.map((connection, i) => (
         <Connection
           key={i}
@@ -48,7 +48,7 @@ const NeuralNetwork = ({ neurons, connections }) => {
         />
       ))}
     </svg>
-  );
-};
+  )
+}
 
-export default NeuralNetwork;
+export default NeuralNetwork

@@ -178,6 +178,8 @@ const Dashboard = () => {
     },
   ]
 
+  let layers = [{ unit: 3 }, { unit: 4 }, { unit: 3 }, { unit: 8 }]
+
   return (
     <>
       <CCard className="mb-4">
@@ -189,7 +191,7 @@ const Dashboard = () => {
               </h4>
             </CCol>
           </CRow>
-          <CustomNNVisualizer width="800" height="600" />
+          <CustomNNVisualizer width="800" height="600" layers={{ layers }} />
         </CCardBody>
       </CCard>
     </>
