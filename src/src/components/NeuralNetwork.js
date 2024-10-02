@@ -4,23 +4,28 @@ import Neuron from './Neuron';
 import Connection from './Connection';
 
 // generate random voltage values
+//TODO:
 const getRandomVoltage = (minVoltage, maxVoltage) => {
   return Math.random() * (maxVoltage - minVoltage) + minVoltage;
 };
 
+  const testVoltages = async () => {
+    return [10, 0.2, 0.3, 0.4, 0.5, 0.06]; 
+  };
 const NeuralNetwork = ({ neurons, connections }) => {
   const [neuronStates, setNeuronStates] = useState(neurons);
 
-  // Randoml neuron voltages
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
+      const voltages = await testVoltages(); 
+
       setNeuronStates((prevStates) =>
-        prevStates.map((neuron) => ({
+        prevStates.map((neuron, i) => ({
           ...neuron,
-          voltage: getRandomVoltage(-70, 30),
+          voltage: voltages[i], 
         }))
       );
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
   }, []);
@@ -41,8 +46,8 @@ const NeuralNetwork = ({ neurons, connections }) => {
         <Neuron
           key={i}
           voltage={neuron.voltage}
-          minVoltage={-70}
-          maxVoltage={30}
+          minVoltage={0}
+          maxVoltage={1}
           x={neuron.x}
           y={neuron.y}
         />
