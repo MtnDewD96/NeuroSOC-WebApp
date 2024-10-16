@@ -3,29 +3,60 @@ import React, { useEffect, useState } from 'react';
 import Neuron from './Neuron';
 import Connection from './Connection';
 
-// generate random voltage values
-//TODO:
-const getRandomVoltage = (minVoltage, maxVoltage) => {
-  return Math.random() * (maxVoltage - minVoltage) + minVoltage;
+// RECEIVING VOLTAGES PART
+let receivedVoltages = Array(8).fill(0);  
+
+let socket;
+
+const connectWebSocket = () => {
+  socket = new WebSocket('ws://192.168.1.10:5000');  // Replace with the correct IP and port
+  socket.binaryType = 'arraybuffer';  
+
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+  };
+
+  socket.onmessage = (event) => {
+    // Update receivedVoltages with new data
+    receivedVoltages = Array.from(new Float32Array(event.data));
+  };
+
+  socket.onclose = () => {
+    console.log("WebSocket connection closed. Attempting to reconnect...");
+    setTimeout(connectWebSocket, 2000);  // Retry every 2 seconds
+  };
+
+  socket.onerror = (error) => {
+    console.error("WebSocket encountered an error:", error);
+    socket.close();  
+  };
 };
 
-  const testVoltages = async () => {
-    return [10, 0.2, 0.3, 0.4, 0.5, 0.06]; 
-  };
+// Initialize the WebSocket connection
+connectWebSocket();
+
+// const getRandomVoltage = (minVoltage, maxVoltage) => {
+//   return Math.random() * (maxVoltage - minVoltage) + minVoltage;
+// };
+
+const testVoltages = async () => {
+  return [10, 0.2, 0.3, 0.4, 0.5, 0.06, 2, 0.7]; 
+};
+// VISUALIZATION PART
 const NeuralNetwork = ({ neurons, connections }) => {
   const [neuronStates, setNeuronStates] = useState(neurons);
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      const voltages = await testVoltages(); 
+      const voltages = receivedVoltages; 
 
       setNeuronStates((prevStates) =>
         prevStates.map((neuron, i) => ({
           ...neuron,
-          voltage: voltages[i], 
+          voltage: receivedVoltages[i] || neuron.voltage
         }))
       );
-    }, 100);
+    }, 200);
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
   }, []);
