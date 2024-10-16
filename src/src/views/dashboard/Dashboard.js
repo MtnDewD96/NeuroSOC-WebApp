@@ -177,6 +177,20 @@ const Dashboard = () => {
       activity: 'Last week',
     },
   ]
+  const layers = {
+
+    layers: [
+
+      { unit: 3 },
+
+      { unit: 5 },
+
+      { unit: 2 }
+
+    ]
+
+  };
+
 
   return (
     <>
@@ -189,7 +203,7 @@ const Dashboard = () => {
               </h4>
             </CCol>
           </CRow>
-          <CustomNNVisualizer width="800" height="600" />
+          <CustomNNVisualizer width="800" height="600" layers={layers} />
         </CCardBody>
       </CCard>
     </>
