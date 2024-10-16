@@ -47,4 +47,4 @@ const NeuronView = ({ neuronIndex, voltage }) => {
   );
 };
 
-export default NeuronPopup;
+export default NeuronView;

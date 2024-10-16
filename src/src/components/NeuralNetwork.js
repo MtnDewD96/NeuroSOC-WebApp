@@ -1,8 +1,8 @@
 // src/components/NeuralNetwork.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import Neuron from './Neuron';
 import Connection from './Connection';
-import NeuronView from './NeuronView';
+import openNeuronPopup from './opener';
 
 ///////////////////////////////////////////////////////////////////////////// RECEIVING VOLTAGES PART /////////////////////////////////////////////////////////////////////////////
 
@@ -35,29 +35,30 @@ import NeuronView from './NeuronView';
 
 // connectWebSocket();
 
-// const getRandomVoltage = (minVoltage, maxVoltage) => {
-//   return Math.random() * (maxVoltage - minVoltage) + minVoltage;
-// };
 
 const testVoltages = async () => {
-  return [10, 0.2, 0.3, 0.4, 0.5, 0.06, 2, 0.7]; 
+  return Array.from({ length: 10 }, () => Math.random());
 };
 ///////////////////////////////////////////////////////////////////////////// VISUALIZATION PART /////////////////////////////////////////////////////////////////////////////
 const NeuralNetwork = ({ neurons, connections }) => {
   const [neuronStates, setNeuronStates] = useState(neurons);
+  const neuronStatesRef = useRef(neurons);
   const [selectedNeuron, setSelectedNeuron] = useState(null);
   
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      const voltages = await testVoltages();
-      setNeuronStates((prevStates) =>
-        prevStates.map((neuron, i) => ({
+      const voltages = await testVoltages(); //REAL-TIME :: COMMENT THIS
+      setNeuronStates((prevStates) =>{
+        const updatedStates = prevStates.map((neuron, i) => ({
           ...neuron,
-          //voltage: receivedVoltages[i] || neuron.voltage
-          voltage: voltages[i],
+          //voltage: receivedVoltages[i] || neuron.voltage //REAL-TIME :: UNCOMMENT THIS
+          voltage: voltages[i], //REAL-TIME :: COMMENT THIS
         }))
-      );
+        neuronStatesRef.current = updatedStates;
+        return updatedStates;
+        
+      });
     }, 200);
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
@@ -65,6 +66,7 @@ const NeuralNetwork = ({ neurons, connections }) => {
 
   const handleNeuronClick = (neuronIndex) => {
     setSelectedNeuron(neuronIndex);
+    openNeuronPopup(neuronIndex, () => neuronStatesRef.current[neuronIndex]?.voltage);  // REAL-TIME UNCOMMENT voltage={receivedVoltages[selectedNeuron] || neuronStates[selectedNeuron]?.voltage}
   };
   
   return (
@@ -88,19 +90,12 @@ const NeuralNetwork = ({ neurons, connections }) => {
             maxVoltage={1}
             x={neuron.x}
             y={neuron.y}
-            onClick={() => handleNeuronClick(i)}  // Add click handler
+            onClick={() => handleNeuronClick(i)}  // click handler
           />
         ))}
       </svg>
-      {selectedNeuron !== null && (
-        <NeuronView 
-          neuronIndex={selectedNeuron} 
-          voltage={neuronStates[selectedNeuron]?.voltage}
-        />
-      )}
     </div>
   );
-}
-
+};
 
 export default NeuralNetwork;

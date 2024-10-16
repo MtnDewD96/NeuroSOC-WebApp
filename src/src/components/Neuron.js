@@ -9,9 +9,20 @@ const voltageToColor = (voltage, minVoltage, maxVoltage) => {
   return `rgb(${r},${g},0)`; // Color from green to red
 };
 
-const Neuron = ({ voltage, minVoltage, maxVoltage, x, y }) => {
+const Neuron = ({ voltage, minVoltage, maxVoltage, x, y, onClick }) => {
   const color = voltageToColor(voltage, minVoltage, maxVoltage);
-  return <circle cx={x} cy={y} r="20" fill={color} stroke="black" />;
+
+  return (
+    <circle
+      cx={x}
+      cy={y}
+      r="20"
+      fill={color}
+      stroke="black"
+      onClick={onClick}  // Add the onClick prop here
+      style={{ cursor: 'pointer', pointerEvents: 'all' }}  // Optional styling for better interactivity
+    />
+  );
 };
 
 export default Neuron;
